@@ -24,7 +24,7 @@ export function useLoading() {
             setProgress(100);
         };
 
-        if (api.isReady()()) {
+        if (api.isReady()) {
             startProgress();
             finishProgress();
         } else {

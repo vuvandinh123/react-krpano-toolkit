@@ -7,12 +7,15 @@ export class KrpanoAPI {
         this.instance = krpano;
     }
 
-    isReady(): () => boolean {
-        return () => !!this.instance;
+    isReady(): boolean {
+        return !!this.instance;
     }
 
     call<T = any>(action: string): T {
-        if (!this.instance) throw new Error("Krpano chưa sẵn sàng");
+        if (!this.instance) {
+            console.error("instance Krpano chưa sẵn sàng");
+            return {} as T;
+        }
         return this.instance?.call?.(action);
     }
 

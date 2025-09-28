@@ -12,7 +12,7 @@ export function krpanoSetup() {
     }, [api]);
 
     useEffect(() => {
-        if (!api) return;
+        if (!api.isReady()) return;
         events.on("ready", () => {
             // Fullscreen helpers
             registerKrpanoGlobal(api, "enterFS", () => {
