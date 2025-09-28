@@ -1,5 +1,5 @@
 # 🎯 React Krpano toolkit 
-
+Vũ Văn Định - [@your_github](https://github.com/vuvandinh203) - vuvandinh.work@gmail.com
 ## 📦 Cài đặt 
 
 Từ npm:
