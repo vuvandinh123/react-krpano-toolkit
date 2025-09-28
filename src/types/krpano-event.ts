@@ -92,7 +92,8 @@ export type KrpanoEventType =
     // Custom Events
     | "oncustom"
     | "onaction"
-    | "ontimer";
+    | "ontimer"
+    | string
 
 /**
  * Event Data Interfaces

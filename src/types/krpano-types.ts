@@ -119,6 +119,7 @@ export interface ElementOperations {
     addElement: (type: 'hotspot' | 'layer' | 'plugin', name: string, properties?: Record<string, any>) => void;
     removeElement: (type: 'hotspot' | 'layer' | 'plugin', name: string) => void;
     cloneElement: (type: 'hotspot' | 'layer' | 'plugin', fromName: string, toName: string) => void;
+    updateElement: (type: 'hotspot' | 'layer' | 'plugin', name: string, properties: Record<string, any>) => void;
 }
 
 /**
