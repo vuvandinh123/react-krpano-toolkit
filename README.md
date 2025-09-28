@@ -1,5 +1,5 @@
 # 🎯 React Krpano toolkit 
-Vũ Văn Định - [@your_github](https://github.com/vuvandinh203) - vuvandinh.work@gmail.com
+Vũ Văn Định - [@your_github](https://github.com/vuvandinh203) - vuvandinh.work@gmail.com - Website : [vuvandinh.id.vn](https://vuvandinh.id.vn)
 ## 📦 Cài đặt 
 
 Từ npm:
@@ -39,7 +39,7 @@ src/
 └── main.js
 ```
 # Tổng quan 
-Chắc chắn! Dưới đây là **bảng tài liệu tổng quan** cho các hook trong thư viện `react-krpano-toolkit`, phân loại theo **Core** và **Events**, kèm mô tả chức năng chính:
+react-krpano-toolkit là thư viện React mạnh mẽ giúp bạn tích hợp Krpano Panorama Viewer vào ứng dụng React một cách dễ dàng và linh hoạt. Thư viện cung cấp cả API core lẫn event system, hỗ trợ tương tác 2 chiều giữa React và Krpano.
 
 | Hook                    | Nhóm | Chức năng / Mô tả                                                                             |
 | ----------------------- | ---- | --------------------------------------------------------------------------------------------- |
@@ -1188,7 +1188,7 @@ const startTimedAutoTour = (scenes: string[], interval: number) => {
 **Mục đích**: Thực thi lệnh với type safety
 
 ```tsx
-const krpano = useKrpanoCommand();
+const krpano = useKrpano();
 
 // ✅ Set hotspot properties
 krpano.execute({
@@ -1284,7 +1284,7 @@ krpano.execute({
 ### Sử dụng các shortcuts tiện lợi
 
 ```tsx
-const krpano = useKrpanoCommand();
+const krpano = useKrpano();
 
 // ✅ Quick show/hide (default to hotspot)
 krpano.show('info_marker');
