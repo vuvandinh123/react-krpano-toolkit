@@ -4,24 +4,24 @@ import { ControlOperations } from "../../types/krpano-types";
 
 export const useControl = () => {
     const ctx = useContext(KrpanoContext);
-    if (!ctx) throw new Error("KrpanoContext chưa được cung cấp");
+    if (!ctx) {
+        console.error("KrpanoContext chưa được cung cấp");
+        return null;
+    }
 
     const { api } = ctx;
     // Control operations
     const control: ControlOperations = {
-        enterFullscreen: () => api.call('enterFS()'),
-        exitFullscreen: () => api.call('exitFS()'),
-        toggleFullscreen: () => api.call('toggleFS()'),
+        enterFullscreen: () => api.set('fullscreen', true),
+        exitFullscreen: () => api.set('fullscreen', false),
+        toggleFullscreen: () => api.set('fullscreen', !api.get('fullscreen')),
         enableControl: () => api.set('control.usercontrol', true),
         disableControl: () => api.set('control.usercontrol', false),
-        setCursor: (cursorType) => api.set('display.cursor', cursorType),
-        showWaitcursor: () => api.call('showwaitcursor()'),
-        hideWaitcursor: () => api.call('hidewaitcursor()'),
         toggleAutoRotate: () => {
             if (api.get("autorotate.enabled") === true) {
-                api.call("autorotate.stop()");
+                api.set("autorotate.enabled", false);
             } else {
-                api.call("autorotate.start()");
+                api.set("autorotate.enabled", true);
             }
         },
         getAutoRotateStatus: () => api.get("autorotate.enabled") === true

@@ -141,9 +141,6 @@ export interface ControlOperations {
     toggleFullscreen: () => void;
     enableControl: () => void;
     disableControl: () => void;
-    setCursor: (cursorType: 'normal' | 'drag' | 'dragging' | 'moving') => void;
-    showWaitcursor: () => void;
-    hideWaitcursor: () => void;
     toggleAutoRotate: () => void;
     getAutoRotateStatus: () => boolean;
 }

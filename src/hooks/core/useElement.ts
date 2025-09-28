@@ -4,7 +4,9 @@ import { ElementOperations } from "../../types/krpano-types";
 
 export const useElement = () => {
     const ctx = useContext(KrpanoContext);
-    if (!ctx) throw new Error("KrpanoContext chưa được cung cấp");
+    if (!ctx) {
+        throw new Error("KrpanoContext chưa được cung cấp");
+    }
 
     const { api } = ctx;
     // Element operations
