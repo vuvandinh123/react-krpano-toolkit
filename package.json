@@ -1,6 +1,6 @@
 {
   "name": "react-krpano-toolkit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A React toolkit for KRPano integration with reusable functions and screen/hotspot configuration management",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
