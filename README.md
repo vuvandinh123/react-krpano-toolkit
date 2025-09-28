@@ -1,4 +1,15 @@
-# 🎯 Krpano Command Hook - Tất cả ví dụ sử dụng
+# 🎯 React Krpano toolkit 
+
+## 📦 Cài đặt 
+
+Từ npm:
+```
+npm install react-krpano-toolkit
+```
+Từ yarn:
+```
+yarn add react-krpano-toolkit
+```
 
 ## 📋 Mục lục
 1. [Scene Operations](#scene-operations)
@@ -12,14 +23,141 @@
 9. [Kết hợp nhiều thao tác](#kết-hợp-nhiều-thao-tác)
 
 ---
+## 🚀 Khởi tạo
+---
 
-## Scene Operations
+## 📂 Cấu trúc thư mục gợi ý
+```
+public/
+└── krpano/
+    ├── tour.xml
+    ├── tour.js
+    ├── tour.swf
+    └── tiles/...
+src/
+└── App.js
+└── main.js
+```
+# Tổng quan 
+Chắc chắn! Dưới đây là **bảng tài liệu tổng quan** cho các hook trong thư viện `react-krpano-toolkit`, phân loại theo **Core** và **Events**, kèm mô tả chức năng chính:
+
+| Hook                    | Nhóm | Chức năng / Mô tả                                                                             |
+| ----------------------- | ---- | --------------------------------------------------------------------------------------------- |
+| `useKrpano`             | Core | Tổng hợp Sự kiện sẽ gửi đi đến `krpano` .         |
+| `useKrpanoGlobalAction` | Core | Thực hiện các hành động global trên Krpano, như load scene, load panorama, reset view.        |
+| `useControl`            | Core | Quản lý các control (buttons, UI) trong panorama, thao tác show/hide, enable/disable.         |
+| `useElement`            | Core | Quản lý các element trong panorama như layers, hotspots, plugin, hỗ trợ thêm/xóa/sửa element. |
+| `useExecute`            | Core | Gọi trực tiếp các lệnh Krpano (`execute`) với chuỗi lệnh JS/krpano action.                    |
+| `useScene`              | Core | Quản lý scenes: chuyển scene, load scene mới, lấy thông tin scenes hiện có.                   |
+| `useSound`              | Core | Quản lý âm thanh: play, pause, stop, điều chỉnh volume, loop.                                 |
+| `useUtility`            | Core | Các hàm tiện ích: lấy thông tin trạng thái, chuyển đổi tọa độ, tính toán góc nhìn.            |
+| `useView`               | Core | Quản lý view (camera): thay đổi hlookat, vlookat, fov, zoom, và theo dõi thay đổi view.       |
+| `useLoading`            | Core | Theo dõi trạng thái load panorama, hiển thị progress hoặc loading overlay.                    |
+
+---
+
+| Hook                   | Nhóm   | Chức năng / Mô tả                                                                                                     |
+| ---------------------- | ------ | --------------------------------------------------------------------------------------------------------------------- |
+| `useKrpanoEventBridge` | Events | Hook core để tạo **bridge giữa Krpano → React**, nhận mọi event từ Krpano.                                            |
+| `useKrpanoCommand`     | Events | Truy cập trực tiếp Krpano API từ context, cho phép gọi lệnh và đọc trạng thái Krpano.                                      |
+| `useLayerEvents`       | Events | Lắng nghe các event liên quan đến layer: click, hover (over), out.                                                    |
+| `useHotspotEvent`      | Events | Lắng nghe các event liên quan đến hotspot: click, hover, out, down, up.                                               |
+| `useViewEvents`        | Events | Lắng nghe thay đổi view: viewchange, viewchanged, idle.                                                               |
+| `useSceneEvents`       | Events | Lắng nghe sự kiện scene: new scene, remove scene.                                                                     |
+| `useMouseEvents`       | Events | Lắng nghe các sự kiện chuột: click, dblclick, mousedown, mouseup, mousemove.                                          |
+| `useSystemEvents`      | Events | Lắng nghe các sự kiện hệ thống Krpano: onloadcomplete, onxmlcomplete, onready, onerror, onresize, onfullscreenchange. |
+| `useKeyboardEvents`    | Events | Lắng nghe các sự kiện bàn phím: keydown, keyup, kèm thông tin keycode và modifier keys.                               |
+| `useKrpanoEventListener`    | Events | Quản lý sự kiện từ Krpano → React. Cho phép đăng ký, xóa, trigger các event hệ thống, scene, view, hotspot, layer, mouse, keyboard. Hỗ trợ cleanup tự động, setup hotspot/layer event dễ dàng và trigger custom event từ React.keys.                               |
+
+
+---
+
+# Bắt Đầu
+
+## Khởi tạo `KrpanoProvider`
+
+`KrpanoProvider` là **context provider** chịu trách nhiệm quản lý trạng thái và các API chung cho Krpano trong toàn bộ ứng dụng. Bạn cần **bọc toàn bộ ứng dụng** trong `main.js` (hoặc file root của React) để mọi component con có thể truy cập Krpano context.
+
+```jsx
+// main.js
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { KrpanoProvider } from "./contexts/KrpanoProvider";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <KrpanoProvider>
+      <App />
+    </KrpanoProvider>
+  </React.StrictMode>
+);
+```
+
+✅ **Lưu ý:** `KrpanoProvider` phải nằm **ngoài App**, để toàn bộ component trong App có thể sử dụng Krpano context.
+
+---
+
+## 2. Sử dụng `KrpanoViewer` trong `App.js`
+
+`KrpanoViewer` là **component chính để hiển thị panorama**. Bạn chỉ cần đặt component này vào nơi muốn hiển thị panorama.
+
+```jsx
+// App.js
+import React from "react";
+import { KrpanoViewer } from "./components/KrpanoViewer";
+
+function App() {
+  return (
+    <div style={{ width: "100%", height: "100vh" }}>
+      <KrpanoViewer
+        path="./krpano"      // Đường dẫn tới thư mục chứa pano
+        xmlName="tour.xml"   // (Tùy chọn) Tên file XML, mặc định là "tour.xml"
+        jsName="tour.js"     // (Tùy chọn) Tên file JS kèm theo, mặc định là "tour.js"
+        swfName="./krpano/tour.swf" // (Tùy chọn) Tên file SWF, mặc định "./krpano/tour.swf"
+        style={{ width: "100%", height: "100%" }} // Tùy chỉnh CSS cho container
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Các props của `KrpanoViewer`:
+
+| Prop      | Type     | Mặc định              | Mô tả                                                            |
+| --------- | -------- | --------------------- | ---------------------------------------------------------------- |
+| `path`    | `string` | **bắt buộc**          | Đường dẫn tới thư mục chứa file panorama (XML, JS, SWF, images). |
+| `xmlName` | `string` | `"tour.xml"`          | Tên file XML cấu hình panorama.                                  |
+| `jsName`  | `string` | `"tour.js"`           | Tên file JS kèm theo (nếu có).                                   |
+| `swfName` | `string` | `"./krpano/tour.swf"` | Tên file SWF cho fallback Flash (nếu cần).                       |
+| `style`   | `object` | `{}`                  | Tùy chỉnh CSS cho container Krpano.                              |
+
+---
+
+### ✅ Lưu ý quan trọng
+
+1. `path` phải **chính xác tới thư mục chứa các file panorama** (`XML, JS, SWF, tiles`...).
+2. Nếu bạn không truyền `xmlName`, `jsName` hoặc `swfName`, `KrpanoViewer` sẽ sử dụng **giá trị mặc định**.
+3. Container của `KrpanoViewer` cần **có kích thước rõ ràng** (`width` và `height`), nếu không panorama sẽ không hiển thị đúng.
+4. `KrpanoProvider` phải bọc toàn bộ ứng dụng để **hỗ trợ các hook và API context** từ Krpano.
+
+---
+
+
+# Sự kiện từ React gửi xuống Krpano
+
+## Scene Operations với hook `useKrpano`
+Mục đích: Khi React muốn điều khiển panorama (Krpano), ví dụ thay đổi view, bật layer, zoom…
+
+Ví dụ: Click button trong React để show/hide layer:
 
 ### 1. loadScene() - Chuyển scene
 **Mục đích**: Chuyển đổi giữa các scene trong tour 360°
 
 ```tsx
-const krpano = useKrpanoCommand();
+const krpano = useKrpano();
 
 // ✅ Chuyển scene cơ bản
 krpano.scene.loadScene('bedroom');
@@ -1532,4 +1670,112 @@ const createAnalyticsSystem = () => {
 7. **Analytics**: Tracking user behavior
 8. **Accessibility**: Control options, user preferences
 
-Mỗi ví dụ đều có thể customize và kết hợp với nhau để tạo nên trải nghiệm 360° tour hoàn chỉnh và phong phú!
+---
+
+# 2 Hook Sự kiện từ Krpano gửi lên React
+
+
+## `useKrpanoEventListener`
+
+Hook này giúp **lắng nghe và quản lý các sự kiện từ Krpano**, bao gồm:
+
+1. **Sự kiện hệ thống** (`onloadcomplete`, `onxmlcomplete`, `onready`, `onerror`, `onresize`, `onfullscreenchange`)
+2. **Sự kiện scene** (`onnewscene`, `onremovescene`)
+3. **Sự kiện view** (`onviewchange`, `onviewchanged`, `onidle`)
+4. **Sự kiện mouse/keyboard** (`onclick`, `ondblclick`, `onmousedown`, `onmouseup`, `onmousemove`, `onkeydown`, `onkeyup`)
+5. **Sự kiện hotspot** (`onhotspotclick`, `onhotspotover`, `onhotspotout`)
+6. **Sự kiện layer** (`onlayerclick`, `onlayerover`, `onlayerout`)
+
+Hook cung cấp các API để **thêm, xóa, trigger và quản lý sự kiện** một cách linh hoạt.
+
+---
+
+## 📌 Cách sử dụng cơ bản
+
+```tsx
+import React, { useEffect } from "react";
+import { useKrpanoEventListener } from "react-krpano-toolkit";
+
+function MyComponent() {
+  const {
+    addEventListener,
+    removeEventListener,
+    setupHotspotEvents,
+    setupLayerEvents,
+    triggerCustomEvent
+  } = useKrpanoEventListener();
+
+  useEffect(() => {
+    // Lắng nghe sự kiện toàn cục từ Krpano
+    const cleanup = addEventListener("onready", (data) => {
+      console.log("Krpano ready!", data);
+    });
+
+    // Trả về cleanup function khi unmount
+    return () => cleanup();
+  }, [addEventListener]);
+
+  useEffect(() => {
+    // Setup hotspot events
+    const cleanupHotspot = setupHotspotEvents("hotspot1", {
+      onclick: (data) => console.log("Hotspot clicked:", data),
+      onover: (data) => console.log("Hotspot hover:", data),
+      onout: (data) => console.log("Hotspot out:", data),
+    });
+
+    // Setup layer events
+    const cleanupLayer = setupLayerEvents("layer1", {
+      onclick: (data) => console.log("Layer clicked:", data),
+    });
+
+    return () => {
+      cleanupHotspot();
+      cleanupLayer();
+    };
+  }, [setupHotspotEvents, setupLayerEvents]);
+
+  const triggerEvent = () => {
+    triggerCustomEvent("oncustom", { msg: "Hello from React!" });
+  };
+
+  return <button onClick={triggerEvent}>Trigger Custom Event</button>;
+}
+```
+
+---
+
+## ⚡ Các hàm chính
+
+| Hàm                       | Mô tả                                             | Tham số                                                                | Trả về                      |
+| ------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------- | --------------------------- |
+| `addEventListener`        | Thêm listener cho một sự kiện Krpano              | `eventType: KrpanoEventType`, `handler: KrpanoEventHandler`            | Hàm cleanup để xóa listener |
+| `removeEventListener`     | Xóa listener đã đăng ký                           | `eventType`, `handler`                                                 | -                           |
+| `removeAllEventListeners` | Xóa tất cả listener hoặc theo eventType           | `eventType?`                                                           | -                           |
+| `registerEventHandlers`   | Đăng ký nhiều handler cùng lúc                    | `handlers: KrpanoEventHandlers`                                        | Hàm cleanup                 |
+| `triggerCustomEvent`      | Gửi sự kiện tùy chỉnh tới Krpano                  | `eventType: string`, `data: any`                                       | -                           |
+| `setupHotspotEvents`      | Thiết lập listener cho hotspot                    | `hotspotName: string`, `{ onclick?, onover?, onout?, ondown?, onup? }` | Hàm cleanup                 |
+| `setupLayerEvents`        | Thiết lập listener cho layer                      | `layerName: string`, `{ onclick?, onover?, onout? }`                   | Hàm cleanup                 |
+| `isListening`             | Kiểm tra đang lắng nghe sự kiện                   | `eventType`                                                            | `boolean`                   |
+| `getListenerCount`        | Lấy số lượng listener đang đăng ký                | `eventType`                                                            | `number`                    |
+| `getAllListeners`         | Lấy danh sách tất cả các eventType đang lắng nghe | -                                                                      | `string[]`                  |
+
+---
+
+## ✅ Lưu ý
+
+1. **Luôn gọi cleanup function** khi component unmount để tránh memory leak.
+2. **Hotspot/Layer events** chỉ kích hoạt khi tên hotspot/layer đúng với tên bạn setup.
+3. **triggerCustomEvent** có thể dùng để gửi event từ React xuống Krpano, ví dụ kết hợp với hotspot/layer custom.
+4. Hook **yêu cầu `KrpanoProvider`** phải bọc component, nếu không sẽ throw lỗi.
+
+---
+
+
+<!-- CONTACT -->
+## Liên hệ
+
+Vũ Văn Định - [@your_github](https://github.com/vuvandinh203) - vuvandinh.work@gmail.com
+
+Project Link: [https://github.com/vuvandinh203/react-krpano-toolkit](https://github.com/vuvandinh203/react-krpano-toolkit)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>

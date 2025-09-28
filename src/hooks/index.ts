@@ -23,6 +23,7 @@ export { useSceneEvents } from "./events/useSceneEvents";
 export { useMouseEvents } from "./events/useMouseEvents";
 export { useSystemEvents } from "./events/useSystemEvents";
 export { useKeyboardEvents } from "./events/useKeyboardEvents";
+export { useKrpanoEventListener } from "./events/useKrpanoEventListener";
 
 
 
