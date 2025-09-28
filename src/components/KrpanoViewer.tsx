@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef } from "react";
+import { krpanoSetup } from "../configs/krpanoSetup";
 
 interface KrpanoViewerProps {
     path: string;                   // đường dẫn đến file pano
     xmlName?: string;               // đường dẫn XML (mặc định: "tour.xml")
     jsName?: string;                // đường dẫn JS (mặc định: "tour.js")
     swfName?: string;               // đường dẫn SWF (mặc định: "./krpano/tour.swf")
-    id?: string;
     style?: React.CSSProperties;
 }
 
@@ -18,7 +18,7 @@ export const KrpanoViewer: React.FC<KrpanoViewerProps> = ({
     style = { width: "100%", height: "100vh" },
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-
+    krpanoSetup();
     useEffect(() => {
         if (!containerRef.current) {
             throw new Error("containerRef.current is null");
