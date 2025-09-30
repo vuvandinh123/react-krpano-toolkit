@@ -35,12 +35,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vuvandinh203/react-krpano-toolkit.git"
+    "url": "git+https://github.com/vuvandinh123/react-krpano-toolkit.git"
   },
   "bugs": {
-    "url": "https://github.com/vuvandinh203/react-krpano-toolkit/issues"
+    "url": "https://github.com/vuvandinh123/react-krpano-toolkit/issues"
   },
-  "homepage": "https://github.com/vuvandinh203/react-krpano-toolkit#readme",
+  "homepage": "https://github.com/vuvandinh123/react-krpano-toolkit#readme",
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
